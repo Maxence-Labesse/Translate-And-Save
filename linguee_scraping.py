@@ -2,24 +2,31 @@ from bs4 import BeautifulSoup
 import requests
 
 
-def build_url(mot, langue):
-    # return "https://www.linguee.fr/" + langue + "/traduction/" + mot + ".html"
-    return "https://www.linguee.fr/" + langue + "/search?source=auto&query=" + mot.replace(" ", "+")
+def get_translation(word, language):
+    """
+    scrape the different translations for a word to translate and a language
 
+    Parameters
+    ----------
+    word (string): word to translate
+    language (string) : translation language
 
-def get_trad(mot, langue):
-    url = build_url(mot, langue)
-    # print(requests.get(url))
-    #print(url)
+    Returns
+    -------
+    (list): list of translations for the word
+    """
+    # build urm according to word and language
+    url = build_url(word, language)
+
+    # get html source code
     html_text = requests.get(url).text
-
-    # print(html_text)
     soup = BeautifulSoup(html_text, 'lxml')
 
+    # find translations zone on web page
     div = soup.find("div", class_="translation_lines")
 
+    # find all translations and store them in a list
     trad_zones = div.find_all("a", class_="dictLink featured")
-
     l_trad = []
     for t in trad_zones:
         l_trad.append(t.text)
@@ -27,22 +34,18 @@ def get_trad(mot, langue):
     return l_trad
 
 
-# print(get_trad(trad_mot, trad_langue))
+def build_url(word, language):
+    """
+    build url from linguee website for a word to translate and a language
 
-""""
-with open('page_test.html', 'r') as html_file:
+    Parameters
+    ----------
+    word (string): word to translate
+    language (string) : translation language
 
-    html_text = html_file.read()
-
-    # print(html_text)
-    soup = BeautifulSoup(html_text, 'lxml')
-
-    div = soup.find("div", class_="translation_lines")
-
-    a_s = div.find_all("a", class_="dictLink featured")
-
-    l_trad = []
-    for a in a_s:
-        l_trad.append(a.text)
-
-    print(l_trad)"""
+    Returns
+    -------
+    (string): built url
+    """
+    # return "https://www.linguee.fr/" + langue + "/traduction/" + mot + ".html"
+    return "https://www.linguee.fr/" + language + "/search?source=auto&query=" + word.replace(" ", "+")
