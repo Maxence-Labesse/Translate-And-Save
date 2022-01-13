@@ -1,10 +1,17 @@
+"""This module provides functions to get words translations
+
+functions
+---------
+
+
+"""
 from bs4 import BeautifulSoup
 import requests
 
 
 def get_translation(word, language):
     """
-    scrape the different translations for a word to translate and a language
+    scrape the different translations for a word and a language
 
     Parameters
     ----------
