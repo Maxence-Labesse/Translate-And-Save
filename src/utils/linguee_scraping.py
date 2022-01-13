@@ -9,21 +9,25 @@ from bs4 import BeautifulSoup
 import requests
 
 
-def get_translation(word, language):
-    """
-    scrape the different translations for a word and a language
+def get_translation(word, languages):
+    """scrape the different translations of a word
+    given translation languages
 
     Parameters
     ----------
-    word (string): word to translate
-    language (string) : translation language
+    word: str
+        word to translate
+    languages: str
+        translatinng languages
+        Ex: "anglais-français"
 
     Returns
     -------
-    (list): list of translations for the word
+    list
+        list of the translations
     """
-    # build urm according to word and language
-    url = build_url(word, language)
+    # build url given word and languages
+    url = build_url(word, languages)
 
     # get html source code
     html_text = requests.get(url).text
@@ -33,26 +37,36 @@ def get_translation(word, language):
     div = soup.find("div", class_="translation_lines")
 
     # find all translations and store them in a list
+    l_translations = []
     trad_zones = div.find_all("a", class_="dictLink featured")
-    l_trad = []
+
     for t in trad_zones:
-        l_trad.append(t.text)
+        l_translations.append(t.text)
 
-    return l_trad
+    if not l_translations:
+        l_translations.append("no translation available")
+
+    return l_translations
 
 
-def build_url(word, language):
+def build_url(word, languages):
     """
-    build url from linguee website for a word to translate and a language
+    build url from linguee website given a word translating
+    languages
+
 
     Parameters
     ----------
-    word (string): word to translate
-    language (string) : translation language
+    word: str
+        word to translate
+    languages: str
+        translatinng languages
+        Ex: "anglais-français"
 
     Returns
     -------
-    (string): built url
+    str:
+        built url
     """
-    # return "https://www.linguee.fr/" + langue + "/traduction/" + mot + ".html"
-    return "https://www.linguee.fr/" + language + "/search?source=auto&query=" + word.replace(" ", "+")
+    print("https://www.linguee.fr/" + languages + "/search?source=auto&query=" + word.replace(" ", "+"))
+    return "https://www.linguee.fr/" + languages + "/search?source=auto&query=" + word.replace(" ", "+")
